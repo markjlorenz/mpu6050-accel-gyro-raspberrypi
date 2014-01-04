@@ -90,7 +90,7 @@ xAxis =
 
    0.092888  -0.069656  -0.993237
 
-octave:39> R = [xAxis', yAxis', zAxis']
+octave:39> R = [xAxis'; yAxis'; zAxis']
 R =
 
    0.09289   0.00000  -0.99568
@@ -108,4 +108,33 @@ ans =
   -1.0115e+00
 
 # note `g'` is the transpose of `g` we need a column vector here not a row vector
+```
+
+Rotating the rotation matrix (when the device rotates after inital calibration):
+```octave
+octave> g1 = [ 1, 0, 0 ]
+octave> r  = rotMatrix(g1)   # calculate the initial rotation matrix, converting device => N,E,D coordinates
+
+octave> function r = d2r(deg)
+  r = deg * pi / 180;
+endfunction
+
+octave> function R = degRotZMatrix(deg)
+  R = [ cos(d2r(deg)), -sin(d2r(deg)), 0
+        sin(d2r(deg)),  cos(d2r(deg)), 0
+        0            ,  0            , 1 ];
+endfunction
+
+#In the next data-frame the device has rotated.  The device => N,E,D mapping needs updated
+octave> g2 = [ 0.707, 0.707, 0 ]  # accelerometer readings after a 45deg clockwise rotation about Z as determined by gyros.
+                                  # This should map to [ 0, 0, -1 ]
+
+octave> newRotationMatrix = r * degRotZMatrix(-45)  # Clockwise is negative
+octave> newRotationMatrix * g2'                     # This should eq N,E,D [ 0, 0 , -1 ]
+
+ans =
+
+   9.1881e-02
+   6.9958e-05
+  -9.9562e-01
 ```
