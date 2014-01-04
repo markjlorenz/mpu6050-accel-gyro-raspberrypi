@@ -48,9 +48,3 @@ class MPU6050
     @sliceVector(gyroSlice).map @applyBuffToEng(calFactor)
 
 module.exports = MPU6050
-
-mpu = new MPU6050
-setInterval ()->
-  mpu.read (err, result)->
-    console.log result
-, 200

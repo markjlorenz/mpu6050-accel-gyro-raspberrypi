@@ -54,3 +54,58 @@ sudo bin/i2c-clang-example -dp -s104 -r67 2
 # Read Buf[1] = ac  << LSB
 # ... done!
 ```
+
+
+## Calculating the Rotation Matrix
+### Overview:
+```octave
+# a sample acceleration reading at rest
+octave:33> g = [1.010040589617603, 0.0065919980468153935, 0.09399700918607135]
+g =
+
+   1.0100406   0.0065920   0.0939970
+
+octave:34> rawZ = -g
+rawZ =
+
+  -1.0100406  -0.0065920  -0.0939970
+
+octave:35> zAxis = rawZ/norm(rawZ)
+zAxis =
+
+  -0.9956766  -0.0064983  -0.0926603
+
+octave:36> rawY = [0, zAxis(3), -zAxis(2)]
+rawY =
+
+   0.000000  -0.092660   0.006498
+
+octave:37> yAxis = rawY / norm(rawY)
+yAxis =
+
+   0.00000  -0.99755   0.06996
+
+octave:38> xAxis = cross(yAxis, zAxis)
+xAxis =
+
+   0.092888  -0.069656  -0.993237
+
+octave:39> R = [xAxis', yAxis', zAxis']
+R =
+
+   0.09289   0.00000  -0.99568
+  -0.06966  -0.99755  -0.00650
+  -0.99324   0.06996  -0.09266
+```
+
+```octave
+# now when `g` is multiplied with the rotation matrix we get the earth-centric reading
+octave:40> R*g'
+ans =
+
+   2.2987e-04
+  -7.7542e-02
+  -1.0115e+00
+
+# note `g'` is the transpose of `g` we need a column vector here not a row vector
+```
