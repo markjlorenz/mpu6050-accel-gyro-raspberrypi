@@ -2,7 +2,7 @@
 (function() {
   var Tracker, tracker;
 
-  Tracker = require("PositionTracker");
+  Tracker = require("./PositionTracker");
 
   tracker = new Tracker(50);
 

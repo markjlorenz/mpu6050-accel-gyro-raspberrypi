@@ -21,7 +21,7 @@
     InitialRotator.prototype.rotate = function(accel) {
       var accelVector, rotated;
       accelVector = $V.create(accel);
-      rotated = this.matirix.x(accelVector);
+      rotated = this.matrix.x(accelVector);
       return [rotated.e(1), rotated.e(2), rotated.e(3)];
     };
 

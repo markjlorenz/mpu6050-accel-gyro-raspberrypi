@@ -14,19 +14,8 @@ class InitialFrame
     @positionDelta = [0,0,0]
     @position      = [0,0,0]
 
-  # tare: (accelValues, gyroValues, timestamp)->
-  #   tareAccel = (coord)->
-  #     accelValues[coord] - @gAccel[coord]
-
-  #   tareGyro  = (coord)->
-  #     gyroValues[coord] - @gyro[coord]
-
-  #   [ applyXYZ.call(@, tareAccel),
-  #     applyXYZ.call(@, tareGyro),
-  #     timestamp ]
-
   normalAccel = ->
-    inNED = @rotation.rotate(@accel)
+    inNED = @rotation.rotate(@accelAndGrav)
     [ inNED[0], inNED[1], inNED[2] + 1 ]
 
   calcAccel = ->

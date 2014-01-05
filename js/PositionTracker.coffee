@@ -11,31 +11,35 @@ class PositionTracker extends EventEmitter
 
   init: (afterInit)->
     afterRead = (err, result)->
+      return console.log(err) if err
       accel = result[0]
       gyro  = result[1]
       time  = result[2]
       initialFrame = new InitialFrame(accel, gyro, time)
       afterInit(initialFrame)
 
-    mpu.read afterRead.bind(@)
+    @accelerometer.read afterRead.bind(@)
 
   run: (initialFrame)->
-    readResult = (err, values)->
-      return console.log(err) if err
-      accel    = result[0]
-      gyro     = result[1]
-      time     = result[2]
-      newFrame = new Frame(lastFrame, accel, gyro, time)
-      @emit "data", newFrame
+    getFrame = (prevFrame)->
+      readResult = (err, result)->
+        return console.log(err) if err
+        accel    = result[0]
+        gyro     = result[1]
+        time     = result[2]
+        newFrame = new Frame(prevFrame, accel, gyro, time)
+        @emit "data", newFrame
 
-      if @running
-        setTimeout run(newFrame).bind(@), @speed
+        if @running
+          setTimeout getFrame.bind(@, newFrame), @speed
 
-    @accelerometer.read readResult.bind(@)
+      @accelerometer.read readResult.bind(@)
+
+    getFrame.call(@, initialFrame)
 
   start: ()->
     @running = true
-    @init(@run)
+    @init @run.bind(@)
 
   stop: ()->
     @running = false

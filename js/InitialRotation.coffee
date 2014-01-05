@@ -11,7 +11,7 @@ class InitialRotator
 
   rotate: (accel)->
     accelVector = $V.create(accel)
-    rotated     = @matirix.x(accelVector)
+    rotated     = @matrix.x(accelVector)
     [ rotated.e(1), rotated.e(2), rotated.e(3) ]
 
   calcMatrix = ->

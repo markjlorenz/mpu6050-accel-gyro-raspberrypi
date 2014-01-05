@@ -6,10 +6,11 @@
 #     console.log result
 # , 200
 
-Tracker = require "PositionTracker"
+Tracker = require "./PositionTracker"
 tracker = new Tracker(50)
 
 tracker.on "data", (frame)->
+  # console.log "---", frame
   console.log frame.accel
   console.log frame.gyro
   console.log frame.position

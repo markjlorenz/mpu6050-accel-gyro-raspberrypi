@@ -5,12 +5,12 @@ $M = Sylvester.Matrix
 class Rotator
   constructor: (@lastRotation, gyroValues, timeDelta)->
     @gyro      = gyroValues           # deg/sec
-    @timeDelta = @timeDelta           # seconds
+    @timeDelta = timeDelta            # seconds
     @matrix    = calcMatrix.call(@)
 
   rotate: (accel)->
     accelVector = $V.create(accel)
-    rotated     = @matirix.x(accelVector)
+    rotated     = @matrix.x(accelVector)
     [ rotated.e(1), rotated.e(2), rotated.e(3) ]
 
   d2r = (deg)->

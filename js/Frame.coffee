@@ -1,4 +1,4 @@
-Rotation = require("./Rotation")
+Rotation = require("./Rotator")
 Gravity  = 9.801
 
 class Frame
@@ -26,7 +26,7 @@ class Frame
 
   # remove tilts from the accel values
   normalAccel = ->
-    inNED = @rotation.rotate(@accel)
+    inNED = @rotation.rotate(@accelAndGrav)
     [ inNED[0], inNED[1], inNED[2] + 1 ]
     # normalize = (coord)->
     #   opposite = Match.cos(@gyro[coord+1 % 2]) * @accel[coord]
@@ -36,7 +36,7 @@ class Frame
     (@timestamp - @lastFrame.timestamp) / 1000
 
   calcRotation = ->
-    Rotation.new @lastFrame.rotation, @gyro, @timeDelta
+    new Rotation @lastFrame.rotation, @gyro, @timeDelta
 
   calcEndVelocity = ->
     velocity = (coord)->

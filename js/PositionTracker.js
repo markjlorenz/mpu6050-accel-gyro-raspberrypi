@@ -27,37 +27,44 @@
       var afterRead;
       afterRead = function(err, result) {
         var accel, gyro, initialFrame, time;
-        accel = result[0];
-        gyro = result[1];
-        time = result[2];
-        initialFrame = new InitialFrame(accel, gyro, time);
-        return afterInit(initialFrame);
-      };
-      return mpu.read(afterRead.bind(this));
-    };
-
-    PositionTracker.prototype.run = function(initialFrame) {
-      var readResult;
-      readResult = function(err, values) {
-        var accel, gyro, newFrame, time;
         if (err) {
           return console.log(err);
         }
         accel = result[0];
         gyro = result[1];
         time = result[2];
-        newFrame = new Frame(lastFrame, accel, gyro, time);
-        this.emit("data", newFrame);
-        if (this.running) {
-          return setTimeout(run(newFrame).bind(this), this.speed);
-        }
+        initialFrame = new InitialFrame(accel, gyro, time);
+        return afterInit(initialFrame);
       };
-      return this.accelerometer.read(readResult.bind(this));
+      return this.accelerometer.read(afterRead.bind(this));
+    };
+
+    PositionTracker.prototype.run = function(initialFrame) {
+      var getFrame;
+      getFrame = function(prevFrame) {
+        var readResult;
+        readResult = function(err, result) {
+          var accel, gyro, newFrame, time;
+          if (err) {
+            return console.log(err);
+          }
+          accel = result[0];
+          gyro = result[1];
+          time = result[2];
+          newFrame = new Frame(prevFrame, accel, gyro, time);
+          this.emit("data", newFrame);
+          if (this.running) {
+            return setTimeout(getFrame.bind(this, newFrame), this.speed);
+          }
+        };
+        return this.accelerometer.read(readResult.bind(this));
+      };
+      return getFrame.call(this, initialFrame);
     };
 
     PositionTracker.prototype.start = function() {
       this.running = true;
-      return this.init(this.run);
+      return this.init(this.run.bind(this));
     };
 
     PositionTracker.prototype.stop = function() {

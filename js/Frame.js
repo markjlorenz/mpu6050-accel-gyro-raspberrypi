@@ -2,7 +2,7 @@
 (function() {
   var Frame, Gravity, Rotation;
 
-  Rotation = require("./Rotation");
+  Rotation = require("./Rotator");
 
   Gravity = 9.801;
 
@@ -42,7 +42,7 @@
 
     normalAccel = function() {
       var inNED;
-      inNED = this.rotation.rotate(this.accel);
+      inNED = this.rotation.rotate(this.accelAndGrav);
       return [inNED[0], inNED[1], inNED[2] + 1];
     };
 
@@ -51,7 +51,7 @@
     };
 
     calcRotation = function() {
-      return Rotation["new"](this.lastFrame.rotation, this.gyro, this.timeDelta);
+      return new Rotation(this.lastFrame.rotation, this.gyro, this.timeDelta);
     };
 
     calcEndVelocity = function() {

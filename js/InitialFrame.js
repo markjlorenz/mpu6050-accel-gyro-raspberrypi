@@ -24,7 +24,7 @@
 
     normalAccel = function() {
       var inNED;
-      inNED = this.rotation.rotate(this.accel);
+      inNED = this.rotation.rotate(this.accelAndGrav);
       return [inNED[0], inNED[1], inNED[2] + 1];
     };
 
