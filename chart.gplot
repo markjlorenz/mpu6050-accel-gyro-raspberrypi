@@ -1,0 +1,6 @@
+#!/usr/bin/env gnuplot
+
+set datafile separator ","
+splot "/dev/stdin"
+
+pause mouse keypress

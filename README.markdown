@@ -125,7 +125,7 @@ octave> function R = degRotZMatrix(deg)
         0            ,  0            , 1 ];
 endfunction
 
-#In the next data-frame the device has rotated.  The device => N,E,D mapping needs updated
+# In the next data-frame the device has rotated.  The device => N,E,D mapping needs updated
 octave> g2 = [ 0.707, 0.707, 0 ]  # accelerometer readings after a 45deg clockwise rotation about Z as determined by gyros.
                                   # This should map to [ 0, 0, -1 ]
 
@@ -137,4 +137,15 @@ ans =
    9.1881e-02
    6.9958e-05
   -9.9562e-01
+```
+
+## Using the included javascript
+```bash
+node js/stream   # Outputs CSV accel, gyro, position and magnitude/time seperated by a "|"
+```
+
+Reading only accel and sending it to a file for gnuplot analysis:
+```bash
+node js/stream | awk -F "|" '{print $1}; fflush()' | tee x_y_z-acceleration.dat
+./chart.gplot < x_y_z-acceleration.dat
 ```
