@@ -1,9 +1,13 @@
+Rotation = require("./Rotation")
+Gravity  = 9.801
+
 class Frame
   constructor: (@lastFrame, accelValues, gyroValues, timestamp)->
     @timestamp     = timestamp                  # ms
     @timeDelta     = calcTimeDelta.call(@)      # seconds
     @gAccel        = accelValues                # g
     @gyro          = gyroValues                 # deg/sec
+    @rotation      = calcRotation.call(@)
     @accelAndGrav  = calcAccel.call(@)          # m/s^2
     @accel         = normalAccel.call(@)
     @endVelocity   = calcEndVelocity.call(@)    # m/s
@@ -17,20 +21,22 @@ class Frame
     "#{in_mm[0]}, #{in_mm[1]}, #{in_mm[2]}"
 
   calcAccel = ->
-    times9_8 = (coord)-> (@gAccel[coord] * 9.801)
+    times9_8 = (coord)-> (@gAccel[coord] * Gravity)
     applyXYZ.call @, times9_8
 
   # remove tilts from the accel values
   normalAccel = ->
-    # if x
-    normalize = (coord)->
-      opposite = Match.cos(@gyro[coord+1 % 2]) * @accel[coord]
-      adjacent = Match.cos(@gyro[coord+1 % 3]) * @accel[coord]
-
-    applyXYZ.call @, normalize
+    inNED = @rotation.rotate(@accel)
+    [ inNED[0], inNED[1], inNED[2] + 1 ]
+    # normalize = (coord)->
+    #   opposite = Match.cos(@gyro[coord+1 % 2]) * @accel[coord]
+    #   adjacent = Match.cos(@gyro[coord+1 % 3]) * @accel[coord]
 
   calcTimeDelta = ->
     (@timestamp - @lastFrame.timestamp) / 1000
+
+  calcRotation = ->
+    Rotation.new @lastFrame.rotation, @gyro, @timeDelta
 
   calcEndVelocity = ->
     velocity = (coord)->
