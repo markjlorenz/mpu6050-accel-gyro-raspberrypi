@@ -4,7 +4,7 @@
 
   InitialRotation = require("./InitialRotation");
 
-  Gravity = 9.801;
+  Gravity = require("./Gravity");
 
   InitialFrame = (function() {
     var applyXYZ, calcAccel, calcRotation, normalAccel;
@@ -25,7 +25,7 @@
     normalAccel = function() {
       var inNED;
       inNED = this.rotation.rotate(this.accelAndGrav);
-      return [inNED[0], inNED[1], inNED[2] + 1];
+      return [inNED[0], inNED[1], inNED[2] + Gravity];
     };
 
     calcAccel = function() {

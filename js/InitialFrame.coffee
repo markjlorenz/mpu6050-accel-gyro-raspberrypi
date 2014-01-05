@@ -1,5 +1,5 @@
 InitialRotation = require("./InitialRotation")
-Gravity         = 9.801
+Gravity  = require("./Gravity")
 
 class InitialFrame
   constructor: (accelValues, gyroValues, timestamp)->
@@ -16,7 +16,7 @@ class InitialFrame
 
   normalAccel = ->
     inNED = @rotation.rotate(@accelAndGrav)
-    [ inNED[0], inNED[1], inNED[2] + 1 ]
+    [ inNED[0], inNED[1], inNED[2] + Gravity ]
 
   calcAccel = ->
     times9_8 = (coord)-> (@gAccel[coord] * Gravity)

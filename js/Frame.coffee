@@ -1,5 +1,5 @@
 Rotation = require("./Rotator")
-Gravity  = 9.801
+Gravity  = require("./Gravity")
 
 class Frame
   constructor: (@lastFrame, accelValues, gyroValues, timestamp)->
@@ -27,7 +27,7 @@ class Frame
   # remove tilts from the accel values
   normalAccel = ->
     inNED = @rotation.rotate(@accelAndGrav)
-    [ inNED[0], inNED[1], inNED[2] + 1 ]
+    [ inNED[0], inNED[1], inNED[2] + Gravity ]
     # normalize = (coord)->
     #   opposite = Match.cos(@gyro[coord+1 % 2]) * @accel[coord]
     #   adjacent = Match.cos(@gyro[coord+1 % 3]) * @accel[coord]
