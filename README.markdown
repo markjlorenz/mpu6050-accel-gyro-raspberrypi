@@ -149,3 +149,16 @@ Reading only accel and sending it to a file for gnuplot analysis:
 node js/stream | awk -F "|" '{print $1}; fflush()' | tee x_y_z-acceleration.dat
 ./chart.gplot < x_y_z-acceleration.dat
 ```
+
+A network version for fun:
+```bash
+# On the raspberry pi:
+node js/stream | awk -F "|" '{print $1}; fflush()' | tee x_y_z-acceleration.dat
+nc -l 3333 < x_y_z-acceleration.dat
+```
+
+```bash
+# On another machine:
+nc r-pi 3333 | ./chart.gplot
+```
+
