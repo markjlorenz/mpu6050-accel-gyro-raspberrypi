@@ -2,7 +2,7 @@ Rotation = require("./Rotator")
 Gravity  = require("./Gravity")
 
 class Frame
-  constructor: (@lastFrame, accelValues, gyroValues, timestamp)->
+  constructor: (@initialFrame, @lastFrame, accelValues, gyroValues, timestamp)->
     @timestamp     = timestamp                  # ms
     @timeDelta     = calcTimeDelta.call(@)      # seconds
     @gAccel        = accelValues                # g
@@ -27,10 +27,8 @@ class Frame
   # remove tilts from the accel values
   normalAccel = ->
     inNED = @rotation.rotate(@accelAndGrav)
-    [ inNED[0], inNED[1], inNED[2] + Gravity ]
-    # normalize = (coord)->
-    #   opposite = Match.cos(@gyro[coord+1 % 2]) * @accel[coord]
-    #   adjacent = Match.cos(@gyro[coord+1 % 3]) * @accel[coord]
+    @initialFrame.tare(inNED)
+    # [ inNED[0], inNED[1], inNED[2] + Gravity ]
 
   calcTimeDelta = ->
     (@timestamp - @lastFrame.timestamp) / 1000

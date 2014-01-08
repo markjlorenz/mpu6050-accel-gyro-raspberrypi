@@ -51,7 +51,7 @@
           accel = result[0];
           gyro = result[1];
           time = result[2];
-          newFrame = new Frame(prevFrame, accel, gyro, time);
+          newFrame = new Frame(initialFrame, prevFrame, accel, gyro, time);
           this.emit("data", newFrame);
           if (this.running) {
             return setTimeout(getFrame.bind(this, newFrame), this.speed);

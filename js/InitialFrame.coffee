@@ -14,9 +14,13 @@ class InitialFrame
     @positionDelta = [0,0,0]
     @position      = [0,0,0]
 
+  tare: (accel)->
+    t = (coord)-> ( @accel[coord] - accel[coord] )
+    applyXYZ.call @, t
+
   normalAccel = ->
     inNED = @rotation.rotate(@accelAndGrav)
-    [ inNED[0], inNED[1], inNED[2] + Gravity ]
+    [ inNED[0], inNED[1], inNED[2] ]
 
   calcAccel = ->
     times9_8 = (coord)-> (@gAccel[coord] * Gravity)

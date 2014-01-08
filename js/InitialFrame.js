@@ -22,10 +22,21 @@
       this.position = [0, 0, 0];
     }
 
+    InitialFrame.prototype.tare = function(accel) {
+      var t;
+      console.log("-------");
+      console.log(this.accel[2]);
+      console.log(accel[2]);
+      t = function(coord) {
+        return this.accel[coord] - accel[coord];
+      };
+      return applyXYZ.call(this, t);
+    };
+
     normalAccel = function() {
       var inNED;
       inNED = this.rotation.rotate(this.accelAndGrav);
-      return [inNED[0], inNED[1], inNED[2] + Gravity];
+      return [inNED[0], inNED[1], inNED[2]];
     };
 
     calcAccel = function() {

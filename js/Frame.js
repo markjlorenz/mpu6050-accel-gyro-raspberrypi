@@ -9,7 +9,8 @@
   Frame = (function() {
     var applyXYZ, calcAccel, calcEndVelocity, calcPosition, calcPositionDelta, calcRotation, calcTimeDelta, normalAccel;
 
-    function Frame(lastFrame, accelValues, gyroValues, timestamp) {
+    function Frame(initialFrame, lastFrame, accelValues, gyroValues, timestamp) {
+      this.initialFrame = initialFrame;
       this.lastFrame = lastFrame;
       this.timestamp = timestamp;
       this.timeDelta = calcTimeDelta.call(this);
@@ -43,7 +44,7 @@
     normalAccel = function() {
       var inNED;
       inNED = this.rotation.rotate(this.accelAndGrav);
-      return [inNED[0], inNED[1], inNED[2] + Gravity];
+      return this.initialFrame.tare(inNED);
     };
 
     calcTimeDelta = function() {

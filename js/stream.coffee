@@ -9,7 +9,10 @@
 Tracker = require "./PositionTracker"
 tracker = new Tracker(50)
 
+doloop = true
 tracker.on "data", (frame)->
+  return unless doloop
+  doloop = false
   accel    = "#{frame.accel[0]},#{frame.accel[1]},#{frame.accel[2]}"
   gyro     = "#{frame.gyro[0]},#{frame.gyro[1]},#{frame.gyro[2]}"
   position = "#{frame.position[0]},#{frame.position[1]},#{frame.position[2]}"
