@@ -14,6 +14,7 @@
     function InitialRotator(accel) {
       this.accel = accel;
       this.gyro = [0, 0, 0];
+      this.angle = [0, 0, 0];
       this.timeDelta = 0;
       this.matrix = calcMatrix.call(this);
     }

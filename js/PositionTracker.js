@@ -40,11 +40,21 @@
     };
 
     PositionTracker.prototype.run = function(initialFrame) {
-      var getFrame;
+      var accel, applyXYZ, average, getFrame, gyro, step, stepSize;
+      step = 0;
+      stepSize = 10;
+      accel = initialFrame.accel;
+      gyro = initialFrame.gyro;
+      applyXYZ = function(fcn) {
+        return [0, 1, 2].map(fcn, this);
+      };
+      average = function(last, now) {
+        return last + (now / stepSize);
+      };
       getFrame = function(prevFrame) {
         var readResult;
         readResult = function(err, result) {
-          var accel, gyro, newFrame, time;
+          var newFrame, time;
           if (err) {
             return console.log(err);
           }

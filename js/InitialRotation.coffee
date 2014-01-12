@@ -6,6 +6,7 @@ class InitialRotator
   constructor: (accel)->
     @accel     = accel               # m/sec^2
     @gyro      = [0, 0, 0]           # deg/sec
+    @angle     = [0, 0, 0]           # deg
     @timeDelta = 0                   # seconds
     @matrix    = calcMatrix.call(@)
 

@@ -9,12 +9,15 @@
   $M = Sylvester.Matrix;
 
   Rotator = (function() {
-    var calcMatrix, d2r;
+    var applyXYZ, calcAngle, calcMatrix, complimentary, d2r;
 
-    function Rotator(lastRotation, gyroValues, timeDelta) {
+    function Rotator(lastRotation, gyroValues, accelValues, timeDelta) {
       this.lastRotation = lastRotation;
       this.gyro = gyroValues;
+      this.accel = accelValues;
       this.timeDelta = timeDelta;
+      this.raw = calcAngle.call(this);
+      this.angle = this.raw;
       this.matrix = calcMatrix.call(this);
     }
 
@@ -29,14 +32,37 @@
       return deg * Math.PI / 180;
     };
 
+    calcAngle = function() {
+      return applyXYZ.call(this, function(coord) {
+        return this.gyro[coord] * this.timeDelta;
+      });
+    };
+
+    complimentary = function() {
+      var filter;
+      filter = function(coord) {
+        var accelMag, square;
+        square = function(val) {
+          return Math.pow(val, 2);
+        };
+        accelMag = Math.sqrt(square(this.accel[(coord + 1) % 3]) + square(this.accel[(coord + 2) % 3]));
+        return 0.98 * this.raw[coord] + 0.02 * accelMag;
+      };
+      return applyXYZ.call(this, filter);
+    };
+
     calcMatrix = function() {
       var matrix, xRotation, yRotation, zRotation;
-      xRotation = $M.RotationX(d2r(this.gyro[0]) * this.timeDelta);
-      yRotation = $M.RotationY(d2r(this.gyro[1]) * this.timeDelta);
-      zRotation = $M.RotationZ(d2r(this.gyro[2]) * this.timeDelta);
+      xRotation = $M.RotationX(d2r(this.angle[0]));
+      yRotation = $M.RotationY(d2r(this.angle[1]));
+      zRotation = $M.RotationZ(d2r(this.angle[2]));
       matrix = this.lastRotation.matrix.x(xRotation);
       matrix = matrix.x(yRotation);
       return matrix = matrix.x(zRotation);
+    };
+
+    applyXYZ = function(fcn) {
+      return [0, 1, 2].map(fcn, this);
     };
 
     return Rotator;

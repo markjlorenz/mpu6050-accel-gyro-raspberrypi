@@ -1,0 +1,17 @@
+{
+  "name": "visualization",
+  "author": "Mark Lorenz <markjlorenz@dapplebeforedawn.com>",
+  "description": "visuallize the data we just read",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=0.11"
+  },
+  "dependencies": {
+    "socket.io": "*",
+    "connect": "*"
+  }
+}
