@@ -24,17 +24,25 @@
     }
 
     PositionTracker.prototype.init = function(afterInit) {
-      var afterRead;
+      var afterRead, count, initialFrame;
+      initialFrame = new InitialFrame();
+      count = 10;
       afterRead = function(err, result) {
-        var accel, gyro, initialFrame, time;
+        var accel, gyro, time;
         if (err) {
           return console.log(err);
         }
+        count -= 1;
         accel = result[0];
         gyro = result[1];
         time = result[2];
-        initialFrame = new InitialFrame(accel, gyro, time);
-        return afterInit(initialFrame);
+        if (count <= 0) {
+          initialFrame.finalizeCal();
+          return afterInit(initialFrame);
+        } else {
+          initialFrame.addCalData(accel, gyro, time);
+          return this.accelerometer.read(afterRead.bind(this));
+        }
       };
       return this.accelerometer.read(afterRead.bind(this));
     };

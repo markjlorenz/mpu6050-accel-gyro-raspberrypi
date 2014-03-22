@@ -10,13 +10,27 @@ class PositionTracker extends EventEmitter
     @running       = false
 
   init: (afterInit)->
+    # afterRead = (err, result)->
+    #   return console.log(err) if err
+    #   accel = result[0]
+    #   gyro  = result[1]
+    #   time  = result[2]
+    #   initialFrame = new InitialFrame(accel, gyro, time)
+    #   afterInit(initialFrame)
+    initialFrame = new InitialFrame()
+    count = 10
     afterRead = (err, result)->
       return console.log(err) if err
+      count -= 1
       accel = result[0]
       gyro  = result[1]
       time  = result[2]
-      initialFrame = new InitialFrame(accel, gyro, time)
-      afterInit(initialFrame)
+      if count <= 0
+        initialFrame.finalizeCal()
+        afterInit(initialFrame)
+      else
+        initialFrame.addCalData accel, gyro, time
+        @accelerometer.read afterRead.bind(@)
 
     @accelerometer.read afterRead.bind(@)
 

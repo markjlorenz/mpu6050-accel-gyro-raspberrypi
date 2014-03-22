@@ -3,18 +3,51 @@ Gravity  = require("./Gravity")
 Matrix = require("./Matrix")
 
 class InitialFrame
-  constructor: (accelValues, gyroValues, timestamp)->
+  constructor: ()->
+  # constructor: (accelValues, gyroValues, timestamp)->
+    @calCount = 0
+    # @gAccel        = accelValues          # g
+    # @accelAndGrav  = calcAccel.call(@)    # m/s^2
+    # @gyro          = gyroValues           # deg/sec
+    # @rotation      = calcRotation.call(@)
+    # @accel         = normalAccel.call(@)
+    # @timestamp     = timestamp            # ms
+    @timeDelta     = 0                    # seconds
+    @endVelocity   = [0,0,0]
+    @positionDelta = [0,0,0]
+    @position      = [0,0,0]
+    # @scaleMatrix  = scale.call(@)
+    @gAccel        = null
+    @accelAndGrav  = null
+    @gyro          = null
+    @rotation      = null
+    @accel         = null
+    @gyros = []
+    @accels = []
+
+  addCalData: (accel, gyro, timestamp)=>
+    @timestamp = timestamp
+    @calCount += 1
+    @accels = @accels.concat [accel]
+    @gyros = @gyros.concat [gyro]
+
+  finalizeCal: ()=>
+    sumFn = (coord)->
+      (pv, cv)-> ( pv + cv[coord] )
+
+    accelValues = applyXYZ (coord)=>
+      sum = @accels.reduce sumFn(coord), 0
+      sum / @calCount
+    gyroValues = applyXYZ (coord)=>
+      sum = @gyros.reduce sumFn(coord), 0
+      sum / @calCount
+
     @gAccel        = accelValues          # g
     @accelAndGrav  = calcAccel.call(@)    # m/s^2
     @gyro          = gyroValues           # deg/sec
     @rotation      = calcRotation.call(@)
     @accel         = normalAccel.call(@)
-    @timestamp     = timestamp            # ms
-    @timeDelta     = 0                    # seconds
-    @endVelocity   = [0,0,0]
-    @positionDelta = [0,0,0]
-    @position      = [0,0,0]
-    @scaleMatrix  = scale.call(@)
+    @scaleMatrix   = scale.call(@)
 
   tare: (accel)->
     t = (coord)-> ( @accel[coord] - accel[coord] )

@@ -12,23 +12,63 @@
   InitialFrame = (function() {
     var applyXYZ, calcAccel, calcRotation, normalAccel, scale;
 
-    function InitialFrame(accelValues, gyroValues, timestamp) {
+    function InitialFrame() {
       var _this = this;
       this.scale = function(array) {
         return InitialFrame.prototype.scale.apply(_this, arguments);
       };
+      this.finalizeCal = function() {
+        return InitialFrame.prototype.finalizeCal.apply(_this, arguments);
+      };
+      this.addCalData = function(accel, gyro, timestamp) {
+        return InitialFrame.prototype.addCalData.apply(_this, arguments);
+      };
+      this.calCount = 0;
+      this.timeDelta = 0;
+      this.endVelocity = [0, 0, 0];
+      this.positionDelta = [0, 0, 0];
+      this.position = [0, 0, 0];
+      this.gAccel = null;
+      this.accelAndGrav = null;
+      this.gyro = null;
+      this.rotation = null;
+      this.accel = null;
+      this.gyros = [];
+      this.accels = [];
+    }
+
+    InitialFrame.prototype.addCalData = function(accel, gyro, timestamp) {
+      this.timestamp = timestamp;
+      this.calCount += 1;
+      this.accels = this.accels.concat([accel]);
+      return this.gyros = this.gyros.concat([gyro]);
+    };
+
+    InitialFrame.prototype.finalizeCal = function() {
+      var accelValues, gyroValues, sumFn,
+        _this = this;
+      sumFn = function(coord) {
+        return function(pv, cv) {
+          return pv + cv[coord];
+        };
+      };
+      accelValues = applyXYZ(function(coord) {
+        var sum;
+        sum = _this.accels.reduce(sumFn(coord), 0);
+        return sum / _this.calCount;
+      });
+      gyroValues = applyXYZ(function(coord) {
+        var sum;
+        sum = _this.gyros.reduce(sumFn(coord), 0);
+        return sum / _this.calCount;
+      });
       this.gAccel = accelValues;
       this.accelAndGrav = calcAccel.call(this);
       this.gyro = gyroValues;
       this.rotation = calcRotation.call(this);
       this.accel = normalAccel.call(this);
-      this.timestamp = timestamp;
-      this.timeDelta = 0;
-      this.endVelocity = [0, 0, 0];
-      this.positionDelta = [0, 0, 0];
-      this.position = [0, 0, 0];
-      this.scaleMatrix = scale.call(this);
-    }
+      return this.scaleMatrix = scale.call(this);
+    };
 
     InitialFrame.prototype.tare = function(accel) {
       var t;

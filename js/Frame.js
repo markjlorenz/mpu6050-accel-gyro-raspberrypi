@@ -17,7 +17,7 @@
       this.accelValues = accelValues;
       this.timestamp = timestamp;
       this.timeDelta = calcTimeDelta.call(this);
-      this.gAccel = this.accelValues;
+      this.gAccel = scale.call(this);
       this.gyro = gyroValues;
       this.rotation = calcRotation.call(this);
       this.accelAndGrav = calcAccel.call(this);

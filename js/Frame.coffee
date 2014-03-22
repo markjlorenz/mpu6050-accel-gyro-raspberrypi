@@ -6,8 +6,8 @@ class Frame
   constructor: (@initialFrame, @lastFrame, @accelValues, gyroValues, timestamp)->
     @timestamp     = timestamp                  # ms
     @timeDelta     = calcTimeDelta.call(@)      # seconds
-    @gAccel        = @accelValues               # g
-    #@gAccel        = scale.call(@)              # g
+    # @gAccel        = @accelValues               # g
+    @gAccel        = scale.call(@)              # g
     @gyro          = gyroValues                 # deg/sec
     @rotation      = calcRotation.call(@)
     @accelAndGrav  = calcAccel.call(@)          # m/s^2
